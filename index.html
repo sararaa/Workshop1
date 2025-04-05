@@ -1,433 +1,491 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenAI Quiz Generator</title>
+<!DOCTYPE html> <!-- Declares that this document is an HTML5 document -->
+<html lang="en"> <!-- Root element with English language setting -->
+<head> <!-- Contains meta information, styles, and title -->
+    <meta charset="UTF-8"> <!-- Sets the character encoding to UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes the page responsive -->
+    <title>OpenAI Quiz Generator</title> <!-- Sets the page title shown in browser tabs -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { /* Universal selector that applies to all elements */
+            margin: 0; /* Removes default margin */
+            padding: 0; /* Removes default padding */
+            box-sizing: border-box; /* Makes width/height include padding and border */
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f7fa;
+        body { /* Styles for the entire page body */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Sets the font stack */
+            line-height: 1.6; /* Sets line spacing */
+            color: #333; /* Sets text color to dark gray */
+            background-color: #f5f7fa; /* Sets page background to light blue-gray */
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
+        .container { /* Styles for the main container that wraps all content */
+            max-width: 900px; /* Sets maximum width */
+            margin: 0 auto; /* Centers the container horizontally */
+            padding: 20px; /* Adds space inside the container */
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 2rem 0;
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
-            color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        header { /* Styles for the page header */
+            text-align: center; /* Centers the text */
+            margin-bottom: 2rem; /* Adds space below header */
+            padding: 2rem 0; /* Adds vertical padding */
+            background: linear-gradient(90deg, #6366f1, #8b5cf6); /* Creates purple gradient background */
+            color: white; /* Sets text color to white */
+            border-radius: 10px; /* Rounds the corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds subtle shadow */
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        h1 { /* Styles for main heading */
+            font-size: 2.5rem; /* Sets font size */
+            margin-bottom: 0.5rem; /* Adds space below heading */
         }
 
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: #4f46e5;
+        h2 { /* Styles for secondary headings */
+            font-size: 1.8rem; /* Sets font size */
+            margin-bottom: 1.5rem; /* Adds space below heading */
+            color: #4f46e5; /* Sets text color to purple */
         }
 
-        section {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        section { /* Styles for main content sections */
+            background: white; /* Sets background to white */
+            border-radius: 10px; /* Rounds the corners */
+            padding: 2rem; /* Adds space inside sections */
+            margin-bottom: 2rem; /* Adds space below sections */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Adds subtle shadow */
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        .form-group { /* Styles for form field groups */
+            margin-bottom: 1.5rem; /* Adds space below form groups */
         }
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        label { /* Styles for form labels */
+            display: block; /* Makes labels take full width */
+            margin-bottom: 0.5rem; /* Adds space below labels */
+            font-weight: 500; /* Makes text slightly bold */
         }
 
-        input, select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+        input, select { /* Styles for input fields and dropdowns */
+            width: 100%; /* Makes fields take full width */
+            padding: 0.75rem; /* Adds space inside fields */
+            border: 1px solid #ddd; /* Adds light gray border */
+            border-radius: 5px; /* Rounds the corners */
+            font-size: 1rem; /* Sets font size */
         }
 
-        button {
-            background-color: #4f46e5;
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        button { /* Styles for buttons */
+            background-color: #4f46e5; /* Sets button background to purple */
+            color: white; /* Sets text color to white */
+            border: none; /* Removes default border */
+            padding: 0.75rem 1.5rem; /* Adds space inside buttons */
+            border-radius: 5px; /* Rounds the corners */
+            font-size: 1rem; /* Sets font size */
+            cursor: pointer; /* Shows hand cursor on hover */
+            transition: background-color 0.3s; /* Smooth color transition on hover */
         }
 
-        button:hover {
-            background-color: #4338ca;
+        button:hover { /* Styles for buttons when hovered */
+            background-color: #4338ca; /* Darkens the button color */
         }
 
-        button:disabled {
-            background-color: #a5a6f6;
-            cursor: not-allowed;
+        button:disabled { /* Styles for disabled buttons */
+            background-color: #a5a6f6; /* Lightens the button color */
+            cursor: not-allowed; /* Shows 'not-allowed' cursor */
         }
 
-        #generate-btn {
-            width: 100%;
-            margin-top: 1rem;
-            font-weight: 600;
+        #generate-btn { /* Styles specific to the generate button */
+            width: 100%; /* Makes button take full width */
+            margin-top: 1rem; /* Adds space above button */
+            font-weight: 600; /* Makes text semi-bold */
         }
 
-        .hidden {
-            display: none;
+        .hidden { /* Utility class to hide elements */
+            display: none !important; /* Completely hides elements */
         }
 
-        /* Loading spinner */
-        #loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1.5rem;
+        /* Loading spinner styles */
+        #loading { /* Styles for loading indicator container */
+            display: flex; /* Uses flexbox layout */
+            align-items: center; /* Centers items vertically */
+            justify-content: center; /* Centers items horizontally */
+            margin-top: 1.5rem; /* Adds space above loading indicator */
         }
 
-        .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #4f46e5;
-            border-radius: 50%;
-            margin-left: 10px;
-            animation: spin 1s linear infinite;
+        .spinner { /* Styles for the spinner animation */
+            width: 30px; /* Sets width */
+            height: 30px; /* Sets height */
+            border: 3px solid #f3f3f3; /* Creates light gray border */
+            border-top: 3px solid #4f46e5; /* Makes top border purple */
+            border-radius: 50%; /* Makes it circular */
+            margin-left: 10px; /* Adds space to the left */
+            animation: spin 1s linear infinite; /* Applies spinning animation */
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes spin { /* Defines the spin animation */
+            0% { transform: rotate(0deg); } /* Starting position */
+            100% { transform: rotate(360deg); } /* Ending position (full rotation) */
         }
 
         /* Quiz display styling */
-        .quiz-display {
-            background: white;
+        .quiz-display { /* Styles for the quiz results container */
+            background: white; /* Sets background to white */
         }
 
-        .question {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background-color: #f8fafc;
-            border-radius: 8px;
-            border-left: 4px solid #4f46e5;
+        .question { /* Styles for individual questions */
+            margin-bottom: 2rem; /* Adds space below questions */
+            padding: 1.5rem; /* Adds space inside question boxes */
+            background-color: #f8fafc; /* Sets light blue-gray background */
+            border-radius: 8px; /* Rounds the corners */
+            border-left: 4px solid #4f46e5; /* Adds purple left border */
         }
 
-        .question-text {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
+        .question-text { /* Styles for question text */
+            font-weight: 600; /* Makes text semi-bold */
+            font-size: 1.1rem; /* Sets font size */
+            margin-bottom: 1rem; /* Adds space below question text */
         }
 
-        .options {
-            list-style-type: none;
+        .options { /* Styles for answer options list */
+            list-style-type: none; /* Removes bullet points */
         }
 
-        .option {
-            padding: 0.75rem 1rem;
-            margin: 0.5rem 0;
-            background-color: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.2s;
+        .option { /* Styles for individual answer options */
+            padding: 0.75rem 1rem; /* Adds space inside options */
+            margin: 0.5rem 0; /* Adds vertical space between options */
+            background-color: #fff; /* Sets background to white */
+            border: 1px solid #e2e8f0; /* Adds light gray border */
+            border-radius: 5px; /* Rounds the corners */
+            cursor: pointer; /* Shows hand cursor on hover */
+            transition: all 0.2s; /* Smooth transition for all properties */
         }
 
-        .option:hover {
-            background-color: #f1f5f9;
+        .option:hover { /* Styles for options when hovered */
+            background-color: #f1f5f9; /* Changes background to light gray */
         }
 
-        .option.correct {
-            background-color: #ecfdf5;
-            border-color: #34d399;
-            color: #065f46;
+        .option.correct { /* Styles for correct answer options */
+            background-color: #ecfdf5; /* Sets background to light green */
+            border-color: #34d399; /* Sets border to green */
+            color: #065f46; /* Sets text to dark green */
         }
 
-        .option.wrong {
-            background-color: #fef2f2;
-            border-color: #f87171;
-            color: #991b1b;
+        .option.wrong { /* Styles for wrong answer options */
+            background-color: #fef2f2; /* Sets background to light red */
+            border-color: #f87171; /* Sets border to red */
+            color: #991b1b; /* Sets text to dark red */
         }
 
-        .quiz-footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
+        .option.selected { /* Styles for selected answer options */
+            border-color: #4f46e5; /* Sets border to purple */
+            border-width: 2px; /* Makes border thicker */
         }
 
-        #save-btn, #new-quiz-btn {
-            flex: 1;
-            margin: 0 0.5rem;
+        .quiz-footer { /* Styles for quiz footer with buttons */
+            display: flex; /* Uses flexbox layout */
+            justify-content: space-between; /* Spreads items horizontally */
+            margin-top: 2rem; /* Adds space above footer */
         }
 
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: #6b7280;
+        .score-section { /* Styles for score display */
+            background-color: #4f46e5; /* Sets background to purple */
+            color: white; /* Sets text to white */
+            padding: 1rem; /* Adds space inside score box */
+            border-radius: 8px; /* Rounds the corners */
+            margin-top: 1rem; /* Adds space above score box */
+            text-align: center; /* Centers the text */
+            font-size: 1.2rem; /* Sets font size */
+            font-weight: bold; /* Makes text bold */
         }
 
-        @media (max-width: 768px) {
+        #check-answers-btn, #new-quiz-btn { /* Styles for both footer buttons */
+            flex: 1; /* Makes buttons take equal space */
+            margin: 0 0.5rem; /* Adds horizontal space between buttons */
+        }
+
+        footer { /* Styles for page footer */
+            text-align: center; /* Centers the text */
+            margin-top: 2rem; /* Adds space above footer */
+            color: #6b7280; /* Sets text to medium gray */
+        }
+
+        @media (max-width: 768px) { /* Responsive styles for smaller screens */
             .container {
-                padding: 10px;
+                padding: 10px; /* Reduces container padding */
             }
             
             section {
-                padding: 1.5rem;
+                padding: 1.5rem; /* Reduces section padding */
             }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>OpenAI Quiz Generator</h1>
-            <p>Create custom quizzes with artificial intelligence</p>
+<body> <!-- The visible content of the page -->
+    <div class="container"> <!-- Main container for all content -->
+        <header> <!-- Page header -->
+            <h1>OpenAI Quiz Generator</h1> <!-- Main title -->
+            <p>Create custom quizzes with artificial intelligence</p> <!-- Subtitle -->
         </header>
         
-        <main>
-            <section class="quiz-creator">
-                <h2>Generate a Quiz</h2>
+        <main> <!-- Main content area -->
+            <section class="quiz-creator"> <!-- Form section for creating quizzes -->
+                <h2>Generate a Quiz</h2> <!-- Section heading -->
                 
-                <div class="form-group">
-                    <label for="api-key">OpenAI API Key:</label>
-                    <input type="password" id="api-key" placeholder="Enter your API key">
+                <div class="form-group"> <!-- Form group for topic input -->
+                    <label for="topic">Quiz Topic:</label> <!-- Label for topic input -->
+                    <input type="text" id="topic" placeholder="E.g., Ancient Rome, Solar System, Machine Learning"> <!-- Topic input field -->
                 </div>
                 
-                <div class="form-group">
-                    <label for="topic">Quiz Topic:</label>
-                    <input type="text" id="topic" placeholder="E.g., Ancient Rome, Solar System, Machine Learning">
-                </div>
-                
-                <div class="form-group">
-                    <label for="num-questions">Number of Questions:</label>
-                    <select id="num-questions">
-                        <option value="3">3</option>
-                        <option value="5" selected>5</option>
-                        <option value="10">10</option>
+                <div class="form-group"> <!-- Form group for number of questions -->
+                    <label for="num-questions">Number of Questions:</label> <!-- Label for dropdown -->
+                    <select id="num-questions"> <!-- Dropdown for selecting number of questions -->
+                        <option value="3">3</option> <!-- Option for 3 questions -->
+                        <option value="5" selected>5</option> <!-- Default option for 5 questions -->
+                        <option value="10">10</option> <!-- Option for 10 questions -->
                     </select>
                 </div>
                 
-                <button id="generate-btn">Generate Quiz</button>
-                <div id="loading" class="hidden">Generating your quiz... <div class="spinner"></div></div>
+                <button id="generate-btn">Generate Quiz</button> <!-- Button to generate quiz -->
+                <div id="loading" class="hidden">Generating your quiz... <div class="spinner"></div></div> <!-- Loading indicator (hidden by default) -->
             </section>
             
-            <section class="quiz-display hidden" id="quiz-container">
-                <h2 id="quiz-title">Your Quiz</h2>
-                <div id="quiz-content"></div>
-                <div class="quiz-footer">
-                    <button id="save-btn">Save Quiz</button>
-                    <button id="new-quiz-btn">Create Another Quiz</button>
+            <section class="quiz-display hidden" id="quiz-container"> <!-- Section for displaying quiz (hidden by default) -->
+                <h2 id="quiz-title">Your Quiz</h2> <!-- Quiz title (will be updated dynamically) -->
+                <div id="quiz-content"></div> <!-- Container for quiz questions (filled dynamically) -->
+                
+                <div id="score-container" class="hidden score-section"> <!-- Score display (hidden by default) -->
+                    Your Score: <span id="score">0</span>/<span id="total-questions">0</span> <!-- Score counter -->
+                </div>
+                
+                <div class="quiz-footer"> <!-- Footer with quiz action buttons -->
+                    <button id="check-answers-btn">Check Answers</button> <!-- Button to check answers -->
+                    <button id="new-quiz-btn">Create Another Quiz</button> <!-- Button to create new quiz -->
                 </div>
             </section>
         </main>
         
-        <footer>
-            <p>Created for AI Workshop • Powered by OpenAI</p>
+        <footer> <!-- Page footer -->
+            <p>Created for AISC SQ25 Workshop 1 • Powered by OpenAI</p> <!-- Footer text -->
         </footer>
     </div>
     
     <script>
+        // Wait until the DOM is fully loaded before executing JavaScript
         document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const apiKeyInput = document.getElementById('api-key');
-            const topicInput = document.getElementById('topic');
-            const numQuestionsSelect = document.getElementById('num-questions');
-            const generateBtn = document.getElementById('generate-btn');
-            const loadingElement = document.getElementById('loading');
-            const quizContainer = document.getElementById('quiz-container');
-            const quizContent = document.getElementById('quiz-content');
-            const quizTitle = document.getElementById('quiz-title');
-            const saveBtn = document.getElementById('save-btn');
-            const newQuizBtn = document.getElementById('new-quiz-btn');
+            // Get references to DOM elements
+            const topicInput = document.getElementById('topic'); // Input field for quiz topic
+            const numQuestionsSelect = document.getElementById('num-questions'); // Dropdown for number of questions
+            const generateBtn = document.getElementById('generate-btn'); // Button to generate quiz
+            const loadingElement = document.getElementById('loading'); // Loading indicator
+            const quizContainer = document.getElementById('quiz-container'); // Container for the generated quiz
+            const quizContent = document.getElementById('quiz-content'); // Container for quiz questions
+            const quizTitle = document.getElementById('quiz-title'); // Quiz title element
+            const newQuizBtn = document.getElementById('new-quiz-btn'); // Button to create a new quiz
+            const checkAnswersBtn = document.getElementById('check-answers-btn'); // Button to check answers
+            const scoreContainer = document.getElementById('score-container'); // Container for score display
+            const scoreElement = document.getElementById('score'); // Element for showing score
+            const totalQuestionsElement = document.getElementById('total-questions'); // Element for showing total questions
             
-            // Backend API URL - change this to your Flask server address
+            // URL for the backend API
             const API_URL = 'http://127.0.0.1:5000/api/generate_quiz';
             
-            // Current quiz data
+            // Variable to store the current quiz data
             let currentQuiz = null;
             
-            // Event listeners
-            generateBtn.addEventListener('click', generateQuiz);
-            saveBtn.addEventListener('click', saveQuiz);
-            newQuizBtn.addEventListener('click', resetForm);
+            // Set up event listeners
+            generateBtn.addEventListener('click', generateQuiz); // Call generateQuiz when generate button is clicked
+            newQuizBtn.addEventListener('click', resetForm); // Call resetForm when new quiz button is clicked
+            checkAnswersBtn.addEventListener('click', checkAnswers); // Call checkAnswers when check answers button is clicked
             
+            // Function to generate a quiz
             async function generateQuiz() {
-                // Get form values
-                const apiKey = apiKeyInput.value.trim();
-                const topic = topicInput.value.trim();
-                const numQuestions = numQuestionsSelect.value;
+                // Get the user inputs
+                const topic = topicInput.value.trim(); // Get topic and remove whitespace
+                const numQuestions = numQuestionsSelect.value; // Get number of questions
                 
-                // Validate
-                if (!apiKey) {
-                    alert('Please enter your OpenAI API key');
-                    return;
-                }
-                
+                // Validate input
                 if (!topic) {
-                    alert('Please enter a quiz topic');
+                    alert('Please enter a quiz topic'); // Show error if no topic
                     return;
                 }
                 
-                // Show loading
+                // Show loading indicator and disable button
                 loadingElement.classList.remove('hidden');
                 generateBtn.disabled = true;
                 
                 try {
-                    // Make API request
+                    // Make API request to the backend
                     const response = await fetch(API_URL, {
-                        method: 'POST',
+                        method: 'POST', // Use POST method
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json' // Set content type to JSON
                         },
-                        body: JSON.stringify({
-                            api_key: apiKey,
+                        body: JSON.stringify({ // Convert data to JSON string
                             topic: topic,
                             num_questions: numQuestions
                         })
                     });
                     
+                    // Parse the JSON response
                     const data = await response.json();
                     
+                    // Check if there's an error in the response
                     if (data.error) {
                         throw new Error(data.error);
                     }
                     
-                    // Save quiz data
+                    // Save the quiz data
                     currentQuiz = data;
                     
-                    // Display quiz
+                    // Display the quiz
                     displayQuiz(data);
                     
                 } catch (error) {
+                    // Log detailed error to console
+                    console.error('Full error details:', error);
+                    // Show error message to user
                     alert('Error generating quiz: ' + error.message);
+                    // Hide loading indicator
                     loadingElement.classList.add('hidden');
+                    // Re-enable generate button
                     generateBtn.disabled = false;
                 }
             }
             
+            // Function to display the quiz
+            //START HEREEEEEEEEEE
             function displayQuiz(quizData) {
-                // Hide loading
+                // Hide loading indicator 
                 loadingElement.classList.add('hidden');
+                
+                // Hide score container
+                scoreContainer.classList.add('hidden');
                 
                 // Set quiz title
                 quizTitle.textContent = quizData.title || 'Generated Quiz';
                 
-                // Clear previous content
+                // Update total questions counter
+                totalQuestionsElement.textContent = quizData.questions.length;
+                
+                // Clear previous quiz content
                 quizContent.innerHTML = '';
                 
-                // Add each question
+                // Add each question to the DOM
                 quizData.questions.forEach((q, index) => {
+                    // Create question container
                     const questionElement = document.createElement('div');
                     questionElement.className = 'question';
+                    questionElement.dataset.questionIndex = index; // Store question index
                     
-                    // Question text
+                    // Create question text element
                     const questionText = document.createElement('div');
                     questionText.className = 'question-text';
                     questionText.textContent = `Question ${index + 1}: ${q.question}`;
                     questionElement.appendChild(questionText);
                     
-                    // Options
+                    // Create options list
                     const optionsList = document.createElement('ul');
                     optionsList.className = 'options';
                     
+                    // Add each option to the list
                     q.options.forEach((option, optionIndex) => {
                         const optionItem = document.createElement('li');
                         optionItem.className = 'option';
-                        optionItem.dataset.index = optionIndex;
+                        optionItem.dataset.index = optionIndex; // Store option index
+                        optionItem.dataset.questionIndex = index; // Store question index
                         
-                        const isCorrect = optionIndex === q.correct_index;
-                        if (isCorrect) {
-                            optionItem.classList.add('correct');
-                        }
+                        // Store whether this option is correct
+                        optionItem.dataset.isCorrect = (optionIndex === q.correct_index).toString();
                         
-                        // Option letter (A, B, C, D)
-                        const optionLetter = String.fromCharCode(65 + optionIndex);
-                        optionItem.textContent = `${optionLetter}. ${option}`;
+                        // Set option text (without letter prefix)
+                        optionItem.textContent = `${option}`;
                         
-                        // Add to list
+                        // Add click handler to select this option
+                        optionItem.addEventListener('click', function() {
+                            // Remove selected class from all options in this question
+                            const allOptions = this.parentElement.querySelectorAll('.option');
+                            allOptions.forEach(opt => opt.classList.remove('selected'));
+                            
+                            // Add selected class to this option
+                            this.classList.add('selected');
+                        });
+                        
+                        // Add option to the list
                         optionsList.appendChild(optionItem);
                     });
                     
+                    // Add options list to question
                     questionElement.appendChild(optionsList);
+                    // Add question to quiz content
                     quizContent.appendChild(questionElement);
                 });
                 
-                // Show quiz container
+                // Show the quiz container
                 quizContainer.classList.remove('hidden');
+                // Hide the quiz creator form
                 document.querySelector('.quiz-creator').classList.add('hidden');
             }
             
-            function saveQuiz() {
-                if (!currentQuiz) return;
+            // Function to check answers and show score
+            function checkAnswers() {
+                let score = 0; // Initialize score
+                // Get all questions
+                const questions = document.querySelectorAll('.question');
                 
-                // Create text content for download
-                let content = `${currentQuiz.title || 'Generated Quiz'}\n\n`;
-                
-                currentQuiz.questions.forEach((q, index) => {
-                    content += `Question ${index + 1}: ${q.question}\n\n`;
+                // For each question
+                questions.forEach(question => {
+                    // Find the selected option
+                    const selectedOption = question.querySelector('.option.selected');
+                    // Get all options
+                    const allOptions = question.querySelectorAll('.option');
                     
-                    q.options.forEach((option, optionIndex) => {
-                        const optionLetter = String.fromCharCode(65 + optionIndex);
-                        const isCorrect = optionIndex === q.correct_index;
-                        
-                        content += `${optionLetter}. ${option}`;
-                        if (isCorrect) {
-                            content += ' ✓';
+                    // Find the correct option
+                    const correctOption = Array.from(allOptions).find(
+                        option => option.dataset.isCorrect === 'true'
+                    );
+                    
+                    // Mark options as correct/wrong
+                    allOptions.forEach(option => {
+                        if (option.dataset.isCorrect === 'true') {
+                            // Add correct class to the correct option
+                            option.classList.add('correct');
+                        } else if (option === selectedOption) {
+                            // Add wrong class to the selected wrong option
+                            option.classList.add('wrong');
                         }
-                        content += '\n';
                     });
                     
-                    content += '\n';
+                    // Increase score if correct option was selected
+                    if (selectedOption && selectedOption.dataset.isCorrect === 'true') {
+                        score++;
+                    }
                 });
                 
-                // Create download link
-                const blob = new Blob([content], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'quiz.txt';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                // Update score display
+                scoreElement.textContent = score;
+                // Show score container
+                scoreContainer.classList.remove('hidden');
+                
+                // Disable check answers button
+                checkAnswersBtn.disabled = true;
             }
             
+            // Function to reset the form and start over
             function resetForm() {
-                // Clear topic
+                // Clear topic input
                 topicInput.value = '';
                 
                 // Re-enable generate button
                 generateBtn.disabled = false;
                 
+                // Re-enable check answers button
+                checkAnswersBtn.disabled = false;
+                
                 // Show creator, hide quiz
                 document.querySelector('.quiz-creator').classList.remove('hidden');
                 quizContainer.classList.add('hidden');
                 
-                // Focus on topic
+                // Hide score
+                scoreContainer.classList.add('hidden');
+                
+                // Focus on topic input
                 topicInput.focus();
             }
         });
